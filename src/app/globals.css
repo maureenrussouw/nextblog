@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #1e3a8a;
+  --color-background: #000000;
+  --color-secondary-background: #121212;
+  --color-hover: #181818;
+  --color-card: #0f0f0f;
+  --color-surface: #181818;
+  --color-border: #262626 --color-text: #e5e5e5;
+}
+body {
+  color: var(--color-text);
+  background-color: var(--color-background);
+}
+
+.blog-post h2 {
+  color: white !important;
+  font-size: 1.5rem !important;
+  font-weight: bold;
+}
