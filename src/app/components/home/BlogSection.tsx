@@ -36,7 +36,7 @@ const posts = [
     },
     {
         id: 5,
-        title: "Building a Supabase App with Next.js",
+        title: "Top 10 Tools Every Developer",
         category: "Technology",
         readTime: "5 min read",
         image: "/images/blog5.png"
@@ -64,10 +64,17 @@ export default function BlogSection() {
         </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filteredPosts.map((post, index) => (
-                <Link href="/post/post" key={post.id} className="bg-card border border-border rounded-xl overflow-hidden hover:border-primary transition cursor-pointer">
+                <Link href="/post/slug" key={post.id} className="bg-card border border-border rounded-xl overflow-hidden hover:border-primary transition cursor-pointer">
                     <div className="h-44 w-full overflow-hidden relative">
-                        <Image src={post.image} fill alt={post.title} className="object-cover hover:scale-105 transition duration-300" />
+                        <Image src={post.image} fill alt={post.title} 
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover hover:scale-105 transition duration-300" />
                     </div>
+                    <div className="p-5">
+                        <span className="text-xs text-primary font-medium">{post.category}</span>
+                    </div>
+                    <h3 className="text-text mt-2 text-lg font-semibold">{post.title}</h3>
+                    <p className="mt-2 text-sm text-gray-400">{post.readTime}</p>
                 </Link>
             ))}
         </div>
