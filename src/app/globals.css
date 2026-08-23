@@ -15,6 +15,15 @@ body {
   background-color: var(--color-background);
 }
 
+.no-scrillbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 .blog-post h2 {
   color: white !important;
   font-size: 1.5rem !important;
