@@ -24,11 +24,37 @@ export async function POST(req: NextRequest) {
       },
     });
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
     return NextResponse.json({ success: true });
   } catch (error) {
     console.log(error);
     return NextResponse.json({ error: "Server Error" }, { status: 500 });
+  }
+}
+
+export async function GET() {
+  const user = await getCurrentUser();
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  try {
+    const { data, error } = await adminClient.auth.admin.listUsers();
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+    const authors = data.users.map((user) => ({
+      id: user.id,
+      email: user.email,
+      name: user.user_metadata?.name || "Unknown User",
+    }));
+
+    return NextResponse.json(authors);
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json(
+      { error: "Something went wrong" },
+      { status: 500 },
+    );
   }
 }

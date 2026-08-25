@@ -1,28 +1,38 @@
+"use client"
 import Link from "next/link"
+import { useEffect, useState } from "react"
 
-
-const initialAuthors = [
-    {
-    id: 1,
-    name: "Emmanual Egbon",
-    email: "emmanuel@example.com",
-    role: "Admin",
-    },
-    {
-    id: 2,
-    name: "John Doe",
-    email: "john@example.com",
-    role: "Author",
-    },
-    {
-    id: 3,
-    name: "Jane  Smith",
-    email: "janbe@example.com",
-    role: "Author",
-    },
-]
+interface Author {
+    name:  string,
+    email: string,
+    id: string,
+}
 
 export default function AuthorsPage() {
+    const [authors, setAuhors] = useState<Author[]>([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        const fetchAuthors = async ()  => {
+            try {
+                const response  = await fetch("/api/authors")
+                const data = await response.json()
+                if (!response.ok) {
+                    console.log(data.error);
+                    setAuhors([])
+                    return    
+                }
+                setAuhors(data)
+            } catch (error) {
+                console.log(error);
+                setAuhors([])
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchAuthors()
+    },[])
+
   return (
     <main className="md:ml-64 p-6 min-h-screen">
         <div className="mb-6 flex items-center justify-between">
@@ -46,7 +56,17 @@ export default function AuthorsPage() {
                         </tr>
                     </thead>
                     <tbody>
-                        {initialAuthors.map((author) => (
+                        {loading ? (<tr>
+                              <td colSpan={3} className="py-10 text-center text-gray-400">
+                                    Loading authors...
+                                </td>
+                        </tr>) : authors.length === 0 ? (
+                            <tr>
+                                <td colSpan={3} className="py-10 text-center text-gray-400">
+                                    No authors found!
+                                </td>
+                            </tr>
+                        ) : (authors.map((author) => (
                             <tr className="bordet-t border-border hove:bg-surface transition" key={author.id}>
                                 <td className="px-4 py-6 text-text whitespace-nowrap">{author.name}</td>
                                  <td className="px-4 py-6 text-text whitespace-nowrap">{author.email}</td>
@@ -54,7 +74,8 @@ export default function AuthorsPage() {
                                     <button className="text-red-400 hover:text-red-300 text-sm">Delete</button>
                                   </td>
                             </tr>
-                        ))}
+                        )))
+                    }
                     </tbody>
                 </table>
             </div>
