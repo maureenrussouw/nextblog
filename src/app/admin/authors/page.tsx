@@ -1,6 +1,7 @@
 "use client"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import toast from "react-hot-toast"
 
 interface Author {
     name:  string,
@@ -11,6 +12,7 @@ interface Author {
 export default function AuthorsPage() {
     const [authors, setAuhors] = useState<Author[]>([])
     const [loading, setLoading] = useState(true)
+    const [deleting, setDeleting] = useState(false)
 
     useEffect(() => {
         const fetchAuthors = async ()  => {
@@ -32,6 +34,30 @@ export default function AuthorsPage() {
         }
         fetchAuthors()
     },[])
+
+    const handleDelete = async (id: string) => {
+        const confirmDelete = confirm("Delete this author")
+        if (!confirmDelete) return
+        setDeleting(true)
+        try {
+            const response = await fetch(`/api/authors/${id}`,
+                {method: "DELETE"}
+            )
+            const data = await response.json()
+            if (!response.ok) {
+                toast.error(data.error)
+                return
+            }
+            toast.success("Deleted successfully!")
+            setAuhors((prev) => prev.filter((author) => author.id !== id))
+            return
+            
+        } catch (error) {
+             console.log(error);
+        } finally {
+            setDeleting(false)
+        }
+    }
 
   return (
     <main className="md:ml-64 p-6 min-h-screen">
@@ -71,7 +97,10 @@ export default function AuthorsPage() {
                                 <td className="px-4 py-6 text-text whitespace-nowrap">{author.name}</td>
                                  <td className="px-4 py-6 text-text whitespace-nowrap">{author.email}</td>
                                   <td className="px-4 py-6 text-text whitespace-nowrap">
-                                    <button className="text-red-400 hover:text-red-300 text-sm">Delete</button>
+                                    <button 
+                                    disabled={deleting}
+                                    onClick={() => handleDelete(author.id)}
+                                    className="text-red-400 hover:text-red-300 text-sm">Delete</button>
                                   </td>
                             </tr>
                         )))
