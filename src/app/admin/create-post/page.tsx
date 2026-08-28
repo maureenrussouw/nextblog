@@ -1,8 +1,13 @@
 "use client"
 
+import { getCurrentUser } from "@/app/server-actions/getCurrentUser";
+import { createClient } from "@/lib/supabase/client";
 import JoditEditor from "jodit-react";
 import Image from "next/image"
+import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react"
+import toast from "react-hot-toast";
+import Slugify from "slugify"
 
 interface FormState {
     title: string,
@@ -19,7 +24,10 @@ const categories = [
     { name: "Finance",  slug: "finance" },
 ]
 
+const supabase = createClient()
+
 export default function CreatePostPage() {
+    const router =  useRouter()
      const editor = useRef(null);
     const fileInputRef = useRef<null | HTMLInputElement>(null)
     const [form, setForm] = useState<FormState>({
@@ -30,6 +38,7 @@ export default function CreatePostPage() {
         image: null,
     })
     const [preview, setPreview] = useState<string | null>(null)
+    const [loading, setLoading] =  useState(false)
 
     const handleChange = (field: keyof FormState, value: string) => {
         setForm((prev) => ({...prev, [field]:value}))
@@ -63,6 +72,66 @@ export default function CreatePostPage() {
     []
   );
 
+  const handleSubmit = async (e: React.SubmitEvent) => {
+    e.preventDefault()
+    if (!form.content || !form.category || !form.image || !form.title) {
+        toast.error("All fields are required!")
+        return
+    }
+    try {
+        setLoading(true)
+        let imageURL = ""
+        if (form.image) {
+            const fileExt = form.image.name.split(".").pop()
+            const imagePath = `${Date.now()}.${fileExt}`
+            const {error: uploadError} = await supabase.storage.from("cover_images").upload(imagePath,form.image)
+            if (uploadError) {
+                throw new Error(uploadError.message)
+            }
+            // generate image URL
+            const {data: {publicUrl}} = supabase.storage.from("cover_images").getPublicUrl(imagePath)
+            imageURL = publicUrl
+
+        }
+        const {data: {user}} = await supabase.auth.getUser()
+        if (!user) {
+            throw new Error("Unauthorized")
+        }
+        const slug = Slugify(form.title, {
+            lower: true,
+            strict:true,
+            trim: true,
+        })
+        // calculate read time
+        const plainText = form.content.replace(/<[^>]/g,"")
+        const wordCount = plainText.trim().split(/\s+/).length
+        const minsRead = Math.max(1,Math.ceil(wordCount/200))
+        // insert the post
+        const {error} = await supabase.from("posts").insert({
+            title: form.title,
+            slug,
+            content: form.content,
+            category: form.category,
+            status: form.status,
+            cover_image: imageURL,
+            mins_read: minsRead,
+            author_id: user.id,
+            author_name: user.user_metadata.name
+        })
+        if (error) {
+            toast.error(error.message as string)
+            return
+        }
+        toast.success("Post created successfully!")
+        router.replace("/admin/posts")
+        
+    } catch (error) {
+        console.log(error);
+    } finally {
+        setLoading(false)
+    }
+  }
+
   return (
     <main className="md:ml-64 p-6 min-h-screen">
         <div className="mb-6">
@@ -71,7 +140,9 @@ export default function CreatePostPage() {
                 Write and publish a new blog post.
             </p>
         </div>
-        <form className="bg-card border border-border rounded-xl p-5 space-y-6 max-w-3xl">
+        <form 
+        onSubmit={handleSubmit}
+        className="bg-card border border-border rounded-xl p-5 space-y-6 max-w-3xl">
             {/* title */}
             <div>
                 <label className="block text-sm text-gray-400 mb-2">Title</label>
@@ -124,8 +195,10 @@ export default function CreatePostPage() {
                  </div>
             </div>
             <div className="flex items-center justify-end">
-                <button className="px-5 py-2 bg-primary text-white text-sm rounded-lg hover:opacity-90 transition">
-                    Publish
+                <button 
+                disabled = {loading}
+                className="px-5 py-2 bg-primary text-white text-sm rounded-lg hover:opacity-90 transition">
+                    {loading ? "Saving.." : "Save"}
                 </button>
             </div>
         </form>
