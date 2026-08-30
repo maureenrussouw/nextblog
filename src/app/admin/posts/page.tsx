@@ -1,6 +1,7 @@
 "use client"
 
 import { usePosts } from "@/custom-hooks/usePost"
+import Image from "next/image"
 import Link from "next/link"
 
 const initialPosts = [
@@ -44,6 +45,7 @@ export default function PostsPage() {
                             <tr>
                                 <th className="text-left px-4 py-3">Title</th>
                                 <th className="text-left px-4 py-3">Category</th>
+                                <th className="text-left px-4 py-3">Image</th>
                                 <th className="text-left px-4 py-3">Status</th>
                                  <th className="text-left px-4 py-3">Action</th>
                             </tr>
@@ -66,9 +68,14 @@ export default function PostsPage() {
                               <tr className="border-t border-border hover:bg-surface transition" key={post.id}>
                                 <td className="px-4 py-6 text-text whitespace-nowrap">{post.title}</td>
                                 <td className="px-4 py-6 text-text whitespace-nowrap">{post.category}</td>
-                                <td className="px-4 py-6 text-text whitespace-nowrap">{post.status}</td>
+                                 <td className="px-4 py-6"><Image 
+                                 unoptimized src={post.cover_image || ""} alt="post-image" width={56} height={56} className="w-14 h-14 rounded-lg object-cover border border-border min-w-14"/></td>
+                                <td className="px-4 py-6 text-text whitespace-nowrap"><span className={`text-xs px-2 py-1 rounded-full ${post.status === 'published' ? "bg-green-500/10 text-green-400" : "bg-yellow-500/10 text-yellow-400"}`}>{post.status}</span></td>
                                 <td className="px-4 py-6 text-text whitespace-nowrap">
-                                  <button className="text-red-400 hover:text-red-300 text-sm">Delete</button>
+                                <div className="flex items-center justify-end gap-3 whitespace-nowrap">
+                                  <Link className="text-primary hover:underline text-sm" href={`/admin/posts/${post.id}`}>Edit</Link>
+                                    <button className="text-red-400 hover:text-red-300 text-sm">Delete</button>
+                                </div>
                                 </td>
                               </tr>
                             ))

@@ -1,6 +1,5 @@
 "use client"
 
-import { getCurrentUser } from "@/app/server-actions/getCurrentUser";
 import { createClient } from "@/lib/supabase/client";
 import JoditEditor from "jodit-react";
 import Image from "next/image"
@@ -9,7 +8,7 @@ import { useMemo, useRef, useState } from "react"
 import toast from "react-hot-toast";
 import Slugify from "slugify"
 
-interface FormState {
+export interface FormState {
     title: string,
     category: string,
     content: string,
@@ -17,7 +16,7 @@ interface FormState {
     image: null | File,
 }
 
-const categories = [
+export const categories = [
     { name: "Technology",  slug: "technology" },
     { name: "Startup",  slug: "startup" },
     { name: "Lifestyle",  slug: "lifestyle" },
