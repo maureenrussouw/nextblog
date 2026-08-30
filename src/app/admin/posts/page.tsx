@@ -1,3 +1,6 @@
+"use client"
+
+import { usePosts } from "@/custom-hooks/usePost"
 import Link from "next/link"
 
 const initialPosts = [
@@ -22,6 +25,7 @@ const initialPosts = [
 ]
 
 export default function PostsPage() {
+    const {posts, loading} = usePosts()
   return (
      <main className="md:ml-64 p-6 min-h-screen">
             <div className="mb-6 flex items-center justify-between">
@@ -45,16 +49,30 @@ export default function PostsPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {initialPosts.map((post) => (
-                                <tr className="bordet-t border-border hove:bg-surface transition" key={post.id}>
-                                    <td className="px-4 py-6 text-text whitespace-nowrap">{post.title}</td>
-                                     <td className="px-4 py-6 text-text whitespace-nowrap">{post.category}</td>
-                                     <td className="px-4 py-6 text-text whitespace-nowrap">{post.status}</td>
-                                      <td className="px-4 py-6 text-text whitespace-nowrap">
-                                        <button className="text-red-400 hover:text-red-300 text-sm">Delete</button>
-                                      </td>
-                                </tr>
-                            ))}
+                          {loading ? (
+                            <tr>
+                              <td colSpan={4} className="py-10 text-center text-gray-400">
+                                Loading posts...
+                              </td>
+                            </tr>
+                          ) : posts.length === 0 ? (
+                            <tr>
+                              <td colSpan={4} className="py-10 text-center text-gray-400">
+                                No posts found!
+                              </td>
+                            </tr>
+                          ) : (
+                            posts.map((post) => (
+                              <tr className="border-t border-border hover:bg-surface transition" key={post.id}>
+                                <td className="px-4 py-6 text-text whitespace-nowrap">{post.title}</td>
+                                <td className="px-4 py-6 text-text whitespace-nowrap">{post.category}</td>
+                                <td className="px-4 py-6 text-text whitespace-nowrap">{post.status}</td>
+                                <td className="px-4 py-6 text-text whitespace-nowrap">
+                                  <button className="text-red-400 hover:text-red-300 text-sm">Delete</button>
+                                </td>
+                              </tr>
+                            ))
+                          )}
                         </tbody>
                     </table>
                 </div>
