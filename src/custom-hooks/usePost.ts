@@ -10,7 +10,7 @@ export interface Post {
   content: string;
   category: string;
   status: "draft" | "published";
-  cover_image: string | null;
+  cover_image: string;
   mins_read: number;
   author_id: string;
   author_name: string;

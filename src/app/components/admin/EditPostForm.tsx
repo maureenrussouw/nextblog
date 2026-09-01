@@ -75,7 +75,7 @@ export default function EditPostForm({ post} : EditPostFormProps) {
                 if (form.image) {
                     // delete the old image
                     if (post.cover_image) {
-                        const previousImagePath = post.cover_image.split("cover_image")[1]
+                        const previousImagePath = post.cover_image.split("/cover_image/")[1]
                         if (previousImagePath) {
                             await supabase.storage.from("cover_images").remove([previousImagePath])
                         }

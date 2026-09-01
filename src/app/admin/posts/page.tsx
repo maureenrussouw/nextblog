@@ -1,32 +1,45 @@
 "use client"
 
-import { usePosts } from "@/custom-hooks/usePost"
+import { Post, usePosts } from "@/custom-hooks/usePost"
+import { createClient } from "@/lib/supabase/client"
 import Image from "next/image"
 import Link from "next/link"
+import { useState } from "react"
+import toast from "react-hot-toast"
 
-const initialPosts = [
-    {
-        id: 1,
-        title: "Building a Fullstack Blog with Next.js",
-        category: "Technology",
-        status: "Published",
-    },
-    {
-        id: 2,
-        title: "How to Validate Your Startup Idea",
-        category: "Startup",
-        status: "Draft",
-    },
-    {
-        id: 3,
-        title: "Work-Life Balance for Developers",
-        category: "Lifestyle",
-        status: "Published",
-    },
-]
+const supabase = createClient()
 
 export default function PostsPage() {
-    const {posts, loading} = usePosts()
+    const {posts, loading, setPosts} = usePosts()
+    const [deleting,  setDeleting] = useState(false)
+    const handleDelete = async (post: Post) => {
+      const confirmDelete = confirm("Delete this post?")
+      if (!confirmDelete) return
+      const {data: {user}} = await supabase.auth.getUser()
+      if (user?.id !== post.author_id) {
+        toast.error("You cannot delete other authors posts!")
+        return
+      }
+      setDeleting(true)
+      try {
+        // delete the image from bucket
+        const previousImagePath = post.cover_image.split("/cover_image/")[1]
+        if (previousImagePath) {
+          await supabase.storage.from("cover_images").remove([previousImagePath])
+        }
+        // delete the post
+        const {error} = await supabase.from("posts").delete().eq("id",post.id)
+        if (error) {
+          throw new Error(error.message)
+        }
+        toast.success("Post deleted successfully!")
+        setPosts((prev) => prev.filter((item) => item.id !== post.id))  
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setDeleting(false)
+      }
+    }
   return (
      <main className="md:ml-64 p-6 min-h-screen">
             <div className="mb-6 flex items-center justify-between">
@@ -74,7 +87,10 @@ export default function PostsPage() {
                                 <td className="px-4 py-6 text-text whitespace-nowrap">
                                 <div className="flex items-center justify-end gap-3 whitespace-nowrap">
                                   <Link className="text-primary hover:underline text-sm" href={`/admin/posts/${post.id}`}>Edit</Link>
-                                    <button className="text-red-400 hover:text-red-300 text-sm">Delete</button>
+                                    <button 
+                                    disabled={deleting}
+                                    onClick={() => handleDelete(post)}
+                                    className="text-red-400 hover:text-red-300 text-sm">Delete</button>
                                 </div>
                                 </td>
                               </tr>
