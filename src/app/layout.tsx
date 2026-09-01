@@ -1,17 +1,17 @@
-import type { Metadata } from "next";
-import { Poppins } from 'next/font/google'
-import "./globals.css";
-import { Toaster } from "react-hot-toast";
+import type { Metadata } from 'next';
+import { Poppins } from 'next/font/google';
+import './globals.css';
+import { Toaster } from 'react-hot-toast';
 
 const poppins = Poppins({
-  variable: "--font-poppins",
-  subsets:["latin"],
-  weight:["300","400","500","600","700","800"]
-})
+  variable: '--font-poppins',
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800'],
+});
 
 export const metadata: Metadata = {
-  title: "Supabase Blog",
-  description: "Supabase Blog EgbonTech",
+  title: 'Supabase Blog',
+  description: 'Supabase Blog EgbonTech',
 };
 
 export default function RootLayout({
@@ -20,11 +20,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${poppins.className} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}
+    <html lang="en" className={`${poppins.className} h-full antialiased`}>
+      <body className="min-h-full flex flex-col">
+        {children}
         <Toaster />
       </body>
     </html>

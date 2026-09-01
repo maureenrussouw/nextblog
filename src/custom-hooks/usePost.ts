@@ -1,5 +1,6 @@
-import { createClient } from "@/lib/supabase/client";
-import { useEffect, useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { createClient } from '@/lib/supabase/client';
+import { useEffect, useState } from 'react';
 
 const supabase = createClient();
 
@@ -9,7 +10,7 @@ export interface Post {
   slug: string;
   content: string;
   category: string;
-  status: "draft" | "published";
+  status: 'draft' | 'published';
   cover_image: string;
   mins_read: number;
   author_id: string;
@@ -23,9 +24,9 @@ export function usePosts(limit?: number) {
   useEffect(() => {
     const fetchPosts = async () => {
       let query = supabase
-        .from("posts")
-        .select("*")
-        .order("created_at", { ascending: false });
+        .from('posts')
+        .select('*')
+        .order('created_at', { ascending: false });
       if (limit) {
         query = query.limit(limit);
       }

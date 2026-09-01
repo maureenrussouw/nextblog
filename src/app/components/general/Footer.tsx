@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import Logo from "../nabar/Logo";
+import Link from 'next/link';
+import Logo from '../nabar/Logo';
 
 export default function Footer() {
   return (

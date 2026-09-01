@@ -1,6 +1,6 @@
-import { createClient } from "@/lib/supabase/server";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { createClient } from '@/lib/supabase/server';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 export async function getCurrentUser() {
   const cookieStore = await cookies();
@@ -9,7 +9,7 @@ export async function getCurrentUser() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/login");
+    redirect('/login');
   }
   return user;
 }
