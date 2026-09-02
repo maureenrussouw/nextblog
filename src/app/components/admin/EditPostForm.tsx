@@ -67,7 +67,7 @@ export default function EditPostForm({ post }: EditPostFormProps) {
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
-    if (!form.content || !form.category || !form.image || !form.title) {
+    if (!form.content || !form.category || !form.title) {
       toast.error('All fields are required!');
       return;
     }

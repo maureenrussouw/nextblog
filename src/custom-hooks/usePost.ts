@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { createClient } from '@/lib/supabase/client';
 import { useEffect, useState } from 'react';
 
@@ -39,7 +38,7 @@ export function usePosts(limit?: number) {
       setLoading(false);
     };
     fetchPosts();
-  }, []);
+  }, [limit]);
 
   return { posts, loading, setPosts };
 }

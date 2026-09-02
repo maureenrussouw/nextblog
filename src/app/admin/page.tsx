@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import DashboardStats from '../components/admin/DashboardStats';
 
 export default function DashboardPage() {
   return (
@@ -9,24 +10,11 @@ export default function DashboardPage() {
           Dashboard
         </h2>
         <p className="text-sm text-gray-400 mt-1">
-          Welocome baqk, Here's what's happening with your blog.
+          Welocome back, Here's what's happening with your blog.
         </p>
       </div>
       {/* stats */}
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mb-8 sm:mb-10">
-        <div className="bg-card border border-border rounded-xl p-4">
-          <p className="text-sm text-gray-400">Posts</p>
-          <h2 className="text-xl sm:text-02xl font-semibold text-text mt-2">
-            12
-          </h2>
-        </div>
-        <div className="bg-card border border-border rounded-xl p-4">
-          <p className="text-sm text-gray-400">Authors</p>
-          <h2 className="text-xl sm:text-02xl font-semibold text-text mt-2">
-            3
-          </h2>
-        </div>
-      </div>
+      <DashboardStats />
       {/* Recent Posts */}
       <div className="bg-card border border-border rounded-xl p-4 sm:p-5">
         <div className="flex justify-between items-center mb-4">
