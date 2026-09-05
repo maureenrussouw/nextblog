@@ -73,7 +73,13 @@ export default function CreatePostPage() {
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
-    if (!form.content || !form.category || !form.image || !form.title) {
+    if (
+      !form.content ||
+      !form.category ||
+      !form.image ||
+      !form.title ||
+      !form.status
+    ) {
       toast.error('All fields are required!');
       return;
     }
